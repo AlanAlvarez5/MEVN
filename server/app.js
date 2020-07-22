@@ -27,6 +27,8 @@ mongoose.connect(uri, options).then(
 //      res.send('Hola Mundo')
 // })
 
+app.use('/api', require('./routes/nota'))
+
 // Vues Middelware
 app.use(history());
 app.use(express.static(path.join(__dirname, 'public')));
