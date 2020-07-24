@@ -4,8 +4,13 @@ const router = express.Router()
 
 import Nota from '../models/nota'
 
-router.post('/nueva-nota', async (req, res) => {
+const { verificarAuth, verificarAdmin } = require('../middelwares/auth')
+
+router.post('/nueva-nota', verificarAuth, async (req, res) => {
      const body = req.body;
+
+     body.usuarioId = req.usuario._id
+
      try {
 
           const notaDB = await Nota.create(body)
@@ -18,10 +23,13 @@ router.post('/nueva-nota', async (req, res) => {
      }
 })
 
-router.get('/nota/:id', async(req,res)=>{
+router.get('/nota/:id', verificarAuth, async(req,res)=>{
+
+     const usuarioId = req.usuario._id
      const _id = req.params.id
+
      try {
-          const notaDB = await Nota.findOne({_id})
+          const notaDB = await Nota.findOne({_id, usuarioId})
           res.json(notaDB)
 
      } catch (error) {
@@ -33,9 +41,12 @@ router.get('/nota/:id', async(req,res)=>{
 })
 
 
-router.get('/nota', async(req,res)=>{
+router.get('/nota', verificarAuth, async(req,res)=>{
+
+     const usuarioId = req.usuario._id
+
      try {
-          const notaDB = await Nota.find();
+          const notaDB = await Nota.find({usuarioId});
           res.json(notaDB)
      } catch (error) {
           return res.status(400).json({
@@ -45,10 +56,13 @@ router.get('/nota', async(req,res)=>{
      }
 })
 
-router.delete('/nota/:id', async(req,res) => {
+router.delete('/nota/:id', verificarAuth, async(req,res) => {
+
+     const usuarioId = req.usuario._id
      const _id = req.params.id
+
      try {
-          const notaDB = await Nota.findByIdAndDelete({_id});
+          const notaDB = await Nota.findByIdAndDelete({_id, usuarioId});
           if(!notaDB){
                return res.status(400).json({
                     mensaje: 'Error',
@@ -65,12 +79,13 @@ router.delete('/nota/:id', async(req,res) => {
      }
 })
 
-router.put('/nota/:id', async( req, res ) => {
+router.put('/nota/:id', verificarAuth, async( req, res ) => {
      const _id = req.params.id
      const body = req.body
+     const usuarioId = req.usuario._id
 
      try {
-          const notaDB = await Nota.findByIdAndUpdate(_id, body, {new:true})
+          const notaDB = await Nota.findByIdAndUpdate({_id, usuarioId}, body, {new:true})
           if(!notaDB){
                return res.status(400).json({
                     mensaje: 'Error',

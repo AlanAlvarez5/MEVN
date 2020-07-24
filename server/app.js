@@ -13,7 +13,8 @@ app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}))
 
-const uri = 'mongodb://localhost:27017/mevn-app';
+const uri = 'mongodb+srv://alan:easiermean5@cluster0.bg1cg.mongodb.net/notas?retryWrites=true&w=majority';
+
 const options = {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true};
 
 mongoose.connect(uri, options).then(
@@ -28,6 +29,9 @@ mongoose.connect(uri, options).then(
 // })
 
 app.use('/api', require('./routes/nota'))
+app.use('/api', require('./routes/user'))
+app.use('/login', require('./routes/login'))
+
 
 // Vues Middelware
 app.use(history());
